@@ -10,16 +10,19 @@ import (
 )
 
 const PORT = 11814
+const STATIC_PATH = "./static"
 
 func main() {
 	// Set up router
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	// Set up SSE agent
+	fmt.Println("[setup] Creating SSE agent...")
 	sse_agent := sse.NewServer(nil)
 	defer sse_agent.Shutdown()
 	// Set up file server
-	fs := http.FileServer(http.Dir("./static"))
+	fmt.Printf("[setup] Creating file server at \"%s\"...\n", STATIC_PATH)
+	fs := http.FileServer(http.Dir(STATIC_PATH))
 	// Set up routes
 	r.Handle("/static/*", http.StripPrefix("/static/", fs))
 	// Listen & serve
